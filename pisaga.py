@@ -64,7 +64,6 @@ async def answer_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_text(f"✅ Correct! +10 XP (Total: {xp})")
     else:
         await update.message.reply_text(f"❌ Nope! The answer was: {correct}")
-del context.user_data["answer"]
 
 async def profile(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
