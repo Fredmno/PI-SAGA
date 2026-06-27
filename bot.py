@@ -1,4 +1,4 @@
-import json, random, os
+import json, random, os, sys
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 
@@ -66,11 +66,12 @@ async def check(update: Update, ctx):
     ctx.chat_data.pop("answer", None)
 
 def main():
+    print(f"Starting bot on port {PORT}", flush=True)
     app = Application.builder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("puzzle", puzzle))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND & filters.Chat(GROUP_ID), check))
-
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, check))
+    print("Webhook binding...", flush=True)
     app.run_webhook(
         listen="0.0.0.0",
         port=PORT,
