@@ -1,8 +1,8 @@
-import json, random
+import json, random, os
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 
-TOKEN = "YOUR_BOT_TOKEN"
+TOKEN = os.environ["YOUR_BOT_TOKEN"]
 GROUP_ID = -1001234567890  # replace
 
 XP_PER_CORRECT = 30
