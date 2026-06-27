@@ -1,9 +1,11 @@
-import json, random, os
+import json, random, os, asyncio
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 
 TOKEN = os.environ["YOUR_BOT_TOKEN"]
-GROUP_ID = -1001234567890  # replace
+GROUP_ID = -1004384703317  # your "Bin" group
+WEBHOOK_URL = os.environ["WEBHOOK_URL"]  # set on Render
+PORT = int(os.environ.get("PORT", 8080))
 
 XP_PER_CORRECT = 30
 LEVEL_XP = {1: 0, 2: 100, 3: 250, 4: 500, 5: 800, 6: 1200}
@@ -17,11 +19,14 @@ RIDDLES = [
 
 def load():
     try:
-        with open("players.json") as f: return json.load(f)
-    except: return {}
+        with open("players.json") as f:
+            return json.load(f)
+    except:
+        return {}
 
 def save(d):
-    with open("players.json", "w") as f: json.dump(d, f, indent=2)
+    with open("players.json", "w") as f:
+        json.dump(d, f, indent=2)
 
 async def start(update: Update, ctx):
     u = update.effective_user
@@ -40,13 +45,17 @@ async def puzzle(update: Update, ctx):
     await update.message.reply_text(f"🧩 {q}")
 
 async def check(update: Update, ctx):
-    if update.message.chat_id != GROUP_ID: return
+    if update.message.chat_id != GROUP_ID:
+        return
     ans = ctx.chat_data.get("answer")
-    if not ans: return
-    if update.message.text.strip().lower() != ans.lower(): return
+    if not ans:
+        return
+    if update.message.text.strip().lower() != ans.lower():
+        return
     p = load()
     uid = str(update.effective_user.id)
-    if uid not in p: return
+    if uid not in p:
+        return
     p[uid]["xp"] += XP_PER_CORRECT
     for lvl, need in sorted(LEVEL_XP.items(), reverse=True):
         if p[uid]["xp"] >= need and p[uid]["level"] < lvl:
@@ -57,25 +66,21 @@ async def check(update: Update, ctx):
     await update.message.reply_text(f"+{XP_PER_CORRECT} XP")
     ctx.chat_data.pop("answer", None)
 
-app = Application.builder().token(TOKEN).build()
-app.add_handler(CommandHandler("start", start))
-app.add_handler(CommandHandler("puzzle", puzzle))
-app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND & filters.Chat(GROUP_ID), check))
+async def main():
+    app = Application.builder().token(TOKEN).build()
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("puzzle", puzzle))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND & filters.Chat(GROUP_ID), check))
 
-from flask import Flask
-from threading import Thread
-import time
+    await app.initialize()
+    await app.bot.set_webhook(url=f"{WEBHOOK_URL}/{TOKEN}")
+    await app.start()
+    await app.updater.start_webhook(
+        listen="0.0.0.0",
+        port=PORT,
+        url_path=TOKEN,
+    )
+    await asyncio.Event().wait()
 
-app_web = Flask(__name__)
-
-@app_web.route('/')
-def home():
-    return "Bot is alive"
-
-def run_web():
-    app_web.run(host='0.0.0.0', port=8080)
-
-t = Thread(target=run_web)
-t.start()
-
-app.run_polling()
+if __name__ == "__main__":
+    asyncio.run(main())
