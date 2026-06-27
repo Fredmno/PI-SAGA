@@ -4,7 +4,7 @@ import sqlite3
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, MessageHandler, filters, ContextTypes
 
-TOKEN = "YOUR_TOKEN_HERE"  # ← paste your token
+TOKEN = "8847450517:AAETJqGlLPO5taxSYmmqECe_Lm86xxpHCTc"  # ← paste your token
 
 logging.basicConfig(level=logging.INFO)
 
