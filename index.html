@@ -1,33 +1,339 @@
-html <!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"> <title>RPG Word Quest 🎮</title> <style> *{margin:0;padding:0;box-sizing:border-box} body{font-family:system-ui,-apple-system,sans-serif;background:#0a0a14;color:#e2e8f0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px} .app{max-width:480px;width:100%;background:linear-gradient(145deg,#13132a,#1a1a3e);border-radius:20px;padding:20px;border:1px solid rgba(255,255,255,.06);box-shadow:0 20px 50px -10px #000} .tabs{display:flex;gap:4px;background:rgba(255,255,255,.04);border-radius:12px;padding:4px;margin-bottom:16px} .tab{flex:1;padding:8px 0;border:none;border-radius:10px;cursor:pointer;font-weight:600;font-size:13px;color:rgba(255,255,255,.3);background:transparent;transition:.15s} .tab.active{background:#7c3aed;color:#fff;box-shadow:0 4px 12px rgba(124,58,237,.3)} .tab:not(.active):hover{color:rgba(255,255,255,.6)} .panel{display:none}.panel.active{display:block} .card{background:rgba(255,255,255,.04);border-radius:14px;padding:14px;margin-bottom:12px;border:1px solid rgba(255,255,255,.05)} .row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px} .stat-bar{height:6px;border-radius:6px;background:rgba(255,255,255,.08);margin:6px 0;overflow:hidden} .stat-fill{height:100%;border-radius:6px;transition:.3s} .hp-fill{background:linear-gradient(90deg,#ef4444,#f43f5e)} .xp-fill{background:linear-gradient(90deg,#8b5cf6,#a78bfa)} h2{font-size:16px;font-weight:700;margin-bottom:4px;color:#fbbf24} h3{font-size:14px;font-weight:600;margin-bottom:6px;color:#e2e8f0} input,select{width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);color:#fff;font-size:14px;outline:none;margin-bottom:8px} input:focus{border-color:#7c3aed} button{padding:8px 16px;border-radius:10px;border:none;font-weight:600;font-size:13px;cursor:pointer;transition:.12s;color:#fff} button:active{transform:scale(.94)} .btn-primary{background:#7c3aed;width:100%;padding:12px}.btn-primary:hover{background:#6d28d9} .btn-sm{padding:6px 12px;font-size:12px} .btn-buy{background:#059669}.btn-sell{background:#dc2626}.btn-equip{background:#2563eb}.btn-unequip{background:#6b7280} .btn-attack{background:#dc2626;flex:1}.btn-heal{background:#059669;flex:1}.btn-puzzle{background:#d97706;flex:1} .btn:disabled{opacity:.4;pointer-events:none} .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px} .mt-8{margin-top:8px}.mb-8{margin-bottom:8px}.text-right{text-align:right}.text-center{text-align:center} .text-gold{color:#fbbf24}.text-green{color:#4ade80}.text-red{color:#fb7185}.text-purple{color:#c084fc}.text-sm{font-size:12px}.text-xs{font-size:11px;color:rgba(255,255,255,.35)} .tag{display:inline-block;background:rgba(168,85,247,.15);color:#c084fc;padding:2px 10px;border-radius:100px;font-size:11px;font-weight:600} .inv-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px} .inv-item{background:rgba(255,255,255,.04);border-radius:10px;padding:8px;border:1px solid rgba(255,255,255,.05);text-align:center;font-size:12px} .inv-item .name{font-weight:600}.inv-item .type{color:rgba(255,255,255,.35);font-size:10px} .shop-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04)} .shop-item:last-child{border:none} .monster{background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.2);border-radius:12px;padding:12px;text-align:center;margin-bottom:10px} .monster h3{color:#fb7185} .fade-in{animation:fadeIn .2s} @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}} .log{max-height:120px;overflow-y:auto;font-size:12px;color:rgba(255,255,255,.5);border-top:1px solid rgba(255,255,255,.05);padding-top:8px;margin-top:8px} .log p{margin-bottom:2px} .empty{color:rgba(255,255,255,.2);font-size:13px;text-align:center;padding:20px} </style> </head> <body> <div class="app" id="app"> <!-- Character Create --> <div id="createScreen"> <div class="text-center" style="padding:20px 0"> <div style="font-size:48px;margin-bottom:8px">⚔️</div>
+> ChatGPT:
+Alright, let's cook up a solid character sheet with inventory and shop. Dark fantasy RPG vibe, mobile-friendly, all self-contained in one HTML file.
 
-RPG Word Quest
+Here's the full HTML page — character sheet, inventory, and shop in one:
 
-<p class="text-sm" style="color:rgba(255,255,255,.4)">Fight monsters by solving word puzzles</p> </div> <div class="card"> <input id="charName" type="text" placeholder="Enter your name..." maxlength="20"> <select id="charClass"> <option value="warrior">⚔️ Warrior — +5 ATK</option> <option value="mage">🔮 Mage — +5 INT</option> <option value="rogue">🗡️ Rogue — +5 SPD</option> <option value="paladin">🛡️ Paladin — +5 DEF</option> </select> <button class="btn-primary" onclick="createChar()">Start Adventure</button> </div> </div> <!-- Main Game --> <div id="gameScreen" style="display:none"> <div class="tabs" id="tabs"> <button class="tab active" data-tab="status">📊 Stats</button> <button class="tab" data-tab="battle">⚔️ Battle</button> <button class="tab" data-tab="shop">🏪 Shop</button> <button class="tab" data-tab="inventory">🎒 Inv</button> </div> <!-- Status Panel --> <div class="panel active" id="panel-status"> <div class="card"> <div class="row">Hero WarriorLv 1</div> <div class="row text-sm">❤️ HP20/20</div> <div class="stat-bar"><div class="stat-fill hp-fill" id="sHPBar" style="width:100%"></div></div> <div class="row text-sm">✨ XP0/100</div> <div class="stat-bar"><div class="stat-fill xp-fill" id="sXPBar" style="width:0%"></div></div> <div class="grid-2 text-sm mt-8"> <div>⚔️ ATK 5</div> <div>🛡️ DEF 2</div> <div>🔮 INT 2</div> <div>💨 SPD 2</div> </div> <div class="row text-sm mt-8">💰 Gold0</div> </div> <div class="card">
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PI-SAGA — Character</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #0b0d17;
+    color: #e0dcd0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+  }
+  .container {
+    max-width: 480px;
+    width: 100%;
+  }
 
-Equipped
+  / ─── CHARACTER CARD ─── /
+  .charcard {
+    background: linear-gradient(145deg, #14182a, #1a1f33);
+    border: 1px solid #2a3055;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.6);
+  }
+  .charmain {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+  .avatar {
+    width: 90px;
+    height: 90px;
+    border-radius: 12px;
+    border: 2px solid #3b4480;
+    background: #0f1325;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .charmain h2 { font-size: 1.3rem; }
+  .charmain .class { color: #8892d0; font-size: .85rem; }
+  .charmain .level { color: #c9a84c; font-weight: bold; }
 
-<div id="equippedDisplay" class="text-sm"> <div>⚔️ Weapon: None</div> <div>🛡️ Armor: None</div> <div>💍 Accessory: None</div> </div> </div> </div> <!-- Battle Panel --> <div class="panel" id="panel-battle"> <div id="battleArea"> <div class="monster" id="monsterDisplay"> <div style="font-size:36px" id="monsterEmoji">👹</div>
+  / ─── STAT BARS ─── /
+  .statrow {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: .8rem;
+  }
+  .bar .label { width: 30px; font-weight: bold; }
+  .bar .track {
+    flex: 1;
+    height: 10px;
+    background: #1e233f;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .bar .fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width .4s ease;
+  }
+  .hp .fill { background: linear-gradient(90deg, #bc3a3a, #e05858); }
+  .xp .fill { background: linear-gradient(90deg, #3a7bbc, #58b0e0); }
+  .bar .val { width: 48px; text-align: right; color: #aab; }
 
-Goblin
+  .gold {
+    margin-top: 10px;
+    text-align: right;
+    color: #e0b84c;
+    font-weight: bold;
+    font-size: .95rem;
+  }
 
-<div class="text-sm">HP: 15/15</div> <div class="stat-bar"><div class="stat-fill hp-fill" id="monsterBar" style="width:100%"></div></div> <div class="text-xs">Reward: 30 XP | 10 Gold</div> </div> <div class="grid-2 mb-8"> <button class="btn-attack" onclick="startPuzzle('attack')">⚔️ Fight</button> <button class="btn-heal" onclick="startPuzzle('heal')">💊 Heal</button> </div> <button class="btn-puzzle" style="width:100%;margin-bottom:8px" onclick="startPuzzle('magic')">🔮 Cast Spell</button> <button class="btn-sm" style="width:100%;background:#374151" onclick="spawnMonster()">🔄 New Monster</button> </div> <div id="puzzleArea" style="display:none"> <div class="card fade-in" style="text-align:center">
+  / ─── EQUIPMENT ─── /
+  .equips {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .slot {
+    width: 56px; height: 56px;
+    background: #11162e;
+    border: 1px dashed #334; border-radius: 10px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-size: .6rem; color: #556; gap: 2px;
+  }
+  .slot.has { border-style: solid; border-color: #3b4480; color: #c9d; }
+  .slot .icon { font-size: 1.2rem; }
+  .slot .iname { font-size: .55rem; }
 
-Solve the Word
+  / ─── TABS ─── /
+  .tabs {
+    display: flex; gap: 4px; margin-bottom: 10px;
+  }
+  .tabs button {
+    flex: 1; padding: 10px; background: #1a1f33; border: 1px solid #2a3055;
+    border-radius: 10px 10px 0 0; color: #8892d0; font-weight: bold;
+    cursor: pointer; transition: .2s;
+  }
+  .tabs button.active { background: #222b52; border-color: #3b4480; color: #fff; }
+  .tabs button:hover { background: #232c55; }
+  .panel { display: none; }
+  .panel.active { display: block; }
 
-<p style="font-size:20px;font-weight:700;margin:12px 0" id="puzzleClue">_  _ _</p> <p class="text-sm" id="puzzleHint" style="color:rgba(255,255,255,.4)">Hint: A fruit that's red or green</p> <input id="puzzleInput" type="text" placeholder="Your answer..." autocomplete="off" style="margin-bottom:6px"> <div class="grid-2"> <button class="btn-primary" onclick="checkPuzzle()">Submit</button> <button style="background:#374151" onclick="cancelPuzzle()">Cancel</button> </div> <p id="puzzleFB" class="text-sm mt-8" style="min-height:20px"></p> </div> </div> <div class="log" id="battleLog"><p>⚔️ A monster appears!</p></div> </div> <!-- Shop Panel --> <div class="panel" id="panel-shop"> <div class="card"> <div class="row">💰 Gold0</div> </div> <div class="card">
+  / ─── INVENTORY / SHOP GRID ─── /
+  .grid {
+    display: grid; grid-template-columns: repeat(4,1fr); gap: 8px;
+  }
+  .item {
+    background: #14182a; border: 1px solid #2a3055; border-radius: 10px;
 
-🛡️ Weapons
+> ChatGPT:
+padding: 10px 4px; text-align: center; cursor: pointer; transition: .2s;
+    font-size: .7rem;
+  }
+  .item:hover { border-color: #4f5bb0; background: #1a1f38; }
+  .item .iicon { font-size: 1.5rem; display: block; margin-bottom: 4px; }
+  .item .iname { display: block; font-weight: bold; }
+  .item .iprice { color: #e0b84c; font-size: .65rem; }
+  .item .iqty { color: #8a9; font-size: .6rem; }
+  .item button {
+    margin-top: 6px; padding: 4px 10px; font-size: .65rem;
+    background: #2a3055; border: 1px solid #3b4480; border-radius: 6px;
+    color: #e0dcd0; cursor: pointer;
+  }
+  .item button:hover { background: #3b4480; }
 
-<div id="shopWeapons"></div> </div> <div class="card">
+  .empty { grid-column: 1/-1; text-align: center; color: #556; padding: 20px; }
 
-🛡️ Armor
+  / ─── TOOLTIP ─── /
+  .tooltip {
+    display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: #0b0d17; border: 1px solid #3b4480; border-radius: 10px;
+    padding: 10px 16px; max-width: 300px; color: #e0dcd0; font-size: .8rem;
+    z-index: 999;
+  }
+  .tooltip.show { display: block; }
+</style>
+</head>
+<body>
 
-<div id="shopArmor"></div> </div> <div class="card">
+  <!-- ═══ CHARACTER CARD ═══ -->
 
-💍 Accessories
+        <img src="https://i.ibb.co/WFj7DmT/generated-image.jpg" alt="Avatar" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 90 90%22><rect fill=%22%23111428%22 width=%2290%22 height=%2290%22/><text fill=%22%23556%22 font-size=%2230%22 x=%2222%22 y=%2260%22>?</text></svg>'">
 
-<div id="shopAcc"></div> </div> </div> <!-- Inventory Panel --> <div class="panel" id="panel-inventory"> <div class="card">
+        Blight
+        Shadowblade · Lv.5
 
-Your Items
+        ❤️
 
-<div id="invGrid" class="inv-grid"><div class="empty">No items yet</div></div> </div> </div> </div> </div> <script> // ===================== DATA ===================== const CLASSES={ warrior:{atk:7,def:3,int:1,spd:2,hp:25,emoji:'⚔️'}, mage:{atk:2,def:2,int:7,spd:3,hp:18,emoji:'🔮'}, rogue:{atk:5,def:1,int:2,spd:7,hp:20,emoji:'🗡️'}, paladin:{atk:4,def:6,int:2,spd:1,hp:28,emoji:'🛡️'} }; const WEAPONS=[ {id:'bronze_sword',name:'Bronze Sword',atk:3,cost:30,emoji:'⚔️'}, {id:'iron_blade',name:'Iron Blade',atk:6,cost:80,emoji:'🗡️'}, {id:'steel_rapier',name:'Steel Rapier',atk:9,cost:180,emoji:'⚔️'}, {id:'enchanted_staff',name:'Enchanted Staff',atk:5,int:5,cost:150,emoji:'🔮'}, {id:'shadow_dagger',name:'Shadow Dagger',atk:7,spd:4,cost:200,emoji:'🗡️'}, {id:'dragon_slayer',name:'Dragon Slayer',atk:14,cost:400,emoji:'⚔️'} ]; const ARMORS=[ {id:'leather_vest',name:'Leather Vest',def:3,cost:30,emoji:'🛡️'}, {id:'chainmail',name:'Chainmail',def:6,cost:90,emoji:'🛡️'}, {id:'iron_plate',name:'Iron Plate',def:10,cost:200,emoji:'🛡️'}, {id:'mystic_robe',name:'Mystic Robe',def:4,int:4,cost:140,emoji:'👘'}, {id:'dragon_scale',name:'Dragon Scale',def:14,cost:450,emoji:'🛡️'} ]; const ACCESSORIES=[ {id:'lucky_ring',name:'Lucky Ring',spd:3,cost:50,emoji:'💍'}, {id:'power_amulet',name:'Power Amulet',atk:4,cost:100,emoji:'📿'}, {id:'guardian_charm',name:'Guardian Charm',def:4,cost:100,emoji:'🍀'}, {id:'sage_stone',name:'Sage Stone',int:5,cost:130,emoji:'💎'}, {id:'phoenix_tear',name:'Phoenix Tear',hp:15,cost:300,emoji:'🧿'} ]; const MONSTERS=[ {name:'Goblin',emoji:'👹',hp:12,atk:3,xp:20,gold:8}, {name:'Skeleton',emoji:'💀',hp:15,atk:4,xp:25,gold:10}, {name:'Slime',emoji:'🟢',hp:8,atk:2,xp:12,gold:5}, {name:'Dark Elf',emoji:'🧝',hp:18,atk:6,xp:35,gold:15}, {name:'Fire Elemental',emoji:'🔥',hp:20,atk:7,xp:40,gold:18}, {name:'Stone Golem',emoji:'🗿',hp:30,atk:5,xp:45,gold:20}, {name:'Shadow Wraith',emoji:'👻',hp:14,atk:8,xp:38,gold:16}, {name:'Vampire Bat',emoji:'🦇',hp:10,atk:5,xp:22,gold:9}, {name:'Orc Warrior',emoji:'👊',hp:25,atk:6,xp:50,gold:25}, {name:'Dragon Hatchling',emoji:'🐉',hp:35,atk:10,xp:80,gold:40} ]; const PUZZLES=[ {q:'What fruit is known as the "king of fruits" and smells strong?',a:'DURIAN',h:'Starts with D, spiky outside'}, {q:'I speak without a mouth. I hear without ears. I have no body. What am I?',a:'ECHO',h:'Comes back to you'}, {q:'The more you take, the more you leave behind. What am I?',a:'FOOTSTEPS',h:'You make them while walking'}, {q:'What has keys but can\'t open locks?',a:'PIANO',h:'Musical instrument'}, {q:'What can travel around the world while staying in a corner?',a:'STAMP',h:'Stick it on an envelope'}, {q:'What gets wetter the more it dries?',a:'TOWEL',h:'You use it after a shower'}, {q:'What has a head, a tail, but no body?',a:'COIN',h:'Jingles in your pocket'}, {q:'I follow you all the time but you can never catch me. What am I?',a:'SHADOW',h:'Dark and follows you'}, {q:'What building has the most stories?',a:'LIBRARY',h:'Full of books'}, {q:'What can you break even if you never pick it up?',a:'PROMISE',h:'You give your word'}, {q:'Forward I am heavy, backward I am not. What am I?',a:'TON',h:'A unit of weight'}, {q:'What has many needles but can\'t sew?',a:'CHRISTMAS TREE',h:'Holiday decoration'}, {q:'What begins with T, ends with T, and has T in it?',a:'TEAPOT',h:'Brews tea'}, {q:'What month has 28 days?',a:'ALL OF THEM',h:'Trick question'}, {q:'What goes up but never comes down?',a:'AGE',h:'You get older'}, {q:'I have cities, but no houses. I have mountains, but no trees. I have water, but no fish. What am I?',a:'MAP',h:'Flat and folded'}, {q:'What has one eye but can\'t see?',a:'NEEDLE',h:'Sewing tool'}, {q:'What can run but never walks, has a mouth but never talks?',a:'RIVER',h:'Flows through valleys'}, {q:'I am not alive, but I can grow. I don\'t have lungs, but I need air. What am I?',a:'FIRE',h:'Burns bright'}, {q:'What word becomes shorter when you add two letters to it?',a:'SHORT',h:'It\'s a word itself'}, {q:'What belongs to you but other people use it more?',a:'YOUR NAME',h:'Given at birth'}, {q:'What has hands but can\'t clap?',a:'CLOCK',h:'Tells time'}, {q:'What has a ring but no finger?',a:'PHONE',h:'You talk on it'}, {q:'What invention lets you look right through a wall?',a:'WINDOW',h:'Made of glass'}, {q:'What can fill a room but takes up no space?',a:'LIGHT',h:'From a lamp'}, {q:'What has lots of eyes but can\'t see?',a:'POTATO',h:'Brown vegetable'}, {q:'What gets sharper the more you use it?',a:'BRAIN',h:'Your mind'}, {q:'What has legs but doesn\'t walk?',a:'TABLE',h:'Furniture'}, {q:'What has words but never speaks?',a:'BOOK',h:'Read it'}, {q:'I fly without wings, I cry without eyes. What am I?',a:'CLOUD',h:'In the sky'} ]; // ===================== GAME STATE ===================== let char={}; let monster={}; let equipped={weapon:null,armor:null,acc:null}; let inventory=[]; let battleMode='attack'; let puzzleSolved=false; let goldBonus=0; // ===================== HELPERS ===================== function $(id){return document.getElementById(id)} function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a} function randInt(min,max){return Math.floor(Math.random()*(max-min+1))+min} function log(msg){const l=$('battleLog');l.innerHTML+=<p>${msg}</p>;l.scrollTop=l.scrollHeight} // ===================== CHARACTER ===================== function createChar(){ const name=$('charName').value.trim()||'Adventurer'; const cls=$('charClass').value; const stats=CLASSES[cls]; char={ name:name, class:cls, classEmoji:stats.emoji, lv:1, hp:stats.hp, maxHP:stats.hp, atk:stats.atk, def:stats.def, int:stats.int, spd:stats.spd, xp:0, xpNext:100, gold:50 }; $('createScreen').style.display='none'; $('gameScreen').style.display='block'; updateUI(); spawnMonster(); renderShop(); renderInventory(); log(🎮 Welcome, ${char.name}! Defeat monsters by solving word puzzles!); } // ===================== XP & LEVEL ===================== function addXP(amount){ char.xp+=amount; while(char.xp>=char.xpNext){ char.xp-=char.xpNext; char.lv++; char.xpNext=Math.floor(char.xpNext*1.4); char.maxHP+=5; char.hp=char.maxHP; char.atk+=1; char.def+=1; char.int+=1; char.spd+=1; log(🎉 LEVEL UP! You are now level ${char.lv}!); } updateUI(); } // ===================== STATS ===================== function getTotalATK(){ let total=char.atk; if(equipped.weapon) total+=equipped.weapon.atk||0; if(equipped.acc) total+=equipped.acc.atk||0; return total; } function getTotalDEF(){ let total=char.def; if(equipped.armor) total+=equipped.armor.def||0; if(equipped.acc) total+=equipped.acc.def||0; return total; } function getTotalINT(){ let total=char.int; if(equipped.weapon) total+=equipped.weapon.int||0; if(equipped.armor) total+=equipped.armor.int||0; if(equipped.acc) total+=equipped.acc.int||0; return total; } function getTotalSPD(){ let total=char.spd; if(equipped.weapon) total+=equipped.weapon.spd||0; if(equipped.acc) total+=equipped.acc.spd||0; return total; } function getBonusHP(){ let total=0; if(equipped.acc) total+=equipped.acc.hp||0; return total; } // ===================== UI UPDATE ===================== function updateUI(){ $('sName').textContent=char.name; $('sClass').textContent=char.class.charAt(0).toUpperCase()+char.class.slice(1); $('sLv').textContent=char.lv; const maxHp=char.maxHP+getBonusHP(); $('sHP').textContent=${char.hp}/${maxHp}; $('sHPBar').style.width=${(char.hp/maxHp)*100}%; $('sXP').textContent=${char.xp}/${char.xpNext}; $('sXPBar').style.width=${(char.xp/char.xpNext)*100}%; $('sATK').textContent=getTotalATK(); $('sDEF').textContent=getTotalDEF(); $('sINT').textContent=getTotalINT(); $('sSPD').textContent=getTotalSPD(); $('sGold').textContent=char.gold; $('shopGold').textContent=char.gold; $('eqWeapon').textContent=equipped.weapon?equipped.weapon.name:'None'; $('eqArmor').textContent=equipped.armor?equipped.armor.name:'None'; $('eqAcc').textContent=equipped.acc?equipped.acc.name:'None'; } // ===================== MONSTER ===================== function spawnMonster(){ const m=MONSTERS[randInt(0,MONSTERS.length-1)]; const lvScale=1+(char.lv-1)*0.2; monster={ name:m.name, emoji:m.emoji, hp:Math.floor(m.hp*lvScale), maxHP:Math.floor(m.hp*lvScale), atk:Math.floor(m.atk*lvScale), xp:Math.floor(m.xp*lvScale), gold:Math.floor(m.gold*lvScale) }; goldBonus=0; $('monsterEmoji').textContent=monster.emoji; $('monsterName').textContent=monster.name; $('monsterHP').textContent=monster.hp; $('monsterMaxHP').textContent=monster.maxHP; $('monsterBar').style.width='100%'; $('monsterReward').textContent=${monster.xp} XP | ${monster.gold} Gold; $('battleArea').style.display='block'; $('puzzleArea').style.display='none'; log(👹 A wild ${monster.name} appears!); } // ===================== PUZZLES ===================== function startPuzzle(mode){ battleMode=mode; if(char.hp<=0){log('💀 You are defeated! Heal first.');return} if(monster.hp<=0){log('✅ Monster is already defeated! Get a new one.');return} const p=PUZZLES[randInt(0,PUZZLES.length-1)]; $('puzzleTitle').textContent=mode==='attack'?'⚔️ Attack! Solve the riddle': mode==='heal'?'💊 Heal! Solve the riddle':'🔮 Cast Spell! Solve the riddle'; $('puzzleClue').textContent=p.q; $('puzzleHint').textContent=💡 ${p.h}; $('puzzleInput').value=''; $('puzzleFB').textContent=''; puzzleSolved=false; $('battleArea').style.display='none'; $('puzzleArea').style.display='block'; $('puzzleInput').focus(); } function checkPuzzle(){ const input=$('puzzleInput').value.trim().toUpperCase(); const clue=$('puzzleClue').textContent; // Find the puzzle const p=PUZZLES.find(x=>x.q===clue); if(!p){$('puzzleFB').textContent='⚠️ Error. Try again.';return} if(input===p.a.toUpperCase()){ puzzleSolved=true; $('puzzleFB').innerHTML='✅ Correct!'; setTimeout(()=>resolvePuzzle(true),500); } else { $('puzzleFB').textContent='❌ Wrong! Try again.'; $('puzzleInput').value=''; $('puzzleInput').focus(); } } function resolvePuzzle(success){ $('puzzleArea').style.display='none'; $('battleArea').style.display='block'; if(!success){log('❌ Puzzle failed!');return} if(battleMode==='attack'){ const dmg=Math.max(1,getTotalATK()+randInt(0,5)); monster.hp-=dmg; if(monster.hp<0)monster.hp=0; const pct=monster.maxHP>0?(monster.hp/monster.maxHP)*100:0; $('monsterHP').textContent=monster.hp; $('monsterBar').style.width=${pct}%; log(⚔️ ${dmg} damage to ${monster.name}!); if(monster.hp<=0){ defeatMonster(); } else { monsterAttack(); } } else if(battleMode==='heal'){ const healAmt=10+getTotalINT()*2; char.hp=Math.min(char.maxHP+getBonusHP(),char.hp+healAmt); updateUI(); log(💊 Healed ${healAmt} HP!); // Monster still attacks monsterAttack(); } else if(battleMode==='magic'){ const dmg=Math.max(1,getTotalINT()*2+randInt(0,4)); monster.hp-=dmg; if(monster.hp<0)monster.hp=0; const pct=monster.maxHP>0?(monster.hp/monster.maxHP)*100:0; $('monsterHP').textContent=monster.hp; $('monsterBar').style.width=${pct}%; goldBonus+=5; log(🔮 ${dmg} magic damage! (+5 gold bonus)); if(monster.hp<=0){ defeatMonster(); } else { monsterAttack(); } } } function cancelPuzzle(){ $('puzzleArea').style.display='none'; $('battleArea').style.display='block'; log('⏭️ Puzzle skipped.'); monsterAttack(); } function monsterAttack(){ const dmg=Math.max(1,monster.atk- Math.floor(getTotalDEF()/2)+randInt(0,3)); char.hp-=dmg; if(char.hp<0)char.hp=0; updateUI(); log(💥 ${monster.name} hits you for ${dmg}!); if(char.hp<=0){ log('💀 You have been defeated!'); } } function defeatMonster(){ const xp=monster.xp+Math.floor(goldBonus/2); const gold=monster.gold+goldBonus; char.gold+=gold; addXP(xp); log(🏆 ${monster.name} defeated! +${xp} XP, +${gold} Gold!); updateUI(); renderShop(); // Auto spawn next setTimeout(spawnMonster,1500); } // ===================== SHOP ===================== function renderShop(){ function shopSection(items,type,containerId){ const c=$(containerId); c.innerHTML=''; items.forEach(item=>{ const div=document.createElement('div'); div.className='shop-item'; const owned=inventory.some(i=>i.id===item.id); div.innerHTML=` <div> ${item.emoji} ${item.name}  ${Object.entries(item).filter(([k])=>!['id','name','cost','emoji'].includes(k)).map(([k,v])=>k.toUpperCase()+': +'+v).join(' | ')}  </div> <div> ${
+        68/100
+
+        ✨
+
+        420/1000
+
+    💰 245 gold
+
+      🗡️Dusk Blade
+
+      🛡️Scale Mail
+
+      👑Head
+
+      👢Boots
+
+      💍Ring
+
+  <!-- ═══ TABS ═══ -->
+
+    <button class="active" data-tab="inv">🎒 Inventory</button>
+    <button data-tab="shop">🏪 Shop</button>
+
+  <!-- ═══ INVENTORY PANEL ═══ -->
+
+  <!-- ═══ SHOP PANEL ═══ -->
+
+  <!-- ═══ TOOLTIP ═══ -->
+
+<script>
+// ─── SAMPLE DATA ───
+const STATE = {
+  name: 'Blight',
+  class: 'Shadowblade',
+  level: 5,
+  hp: 68, maxHp: 100,
+  xp: 420, xpNext: 1000,
+  gold: 245,
+  equipment: {
+    weapon: { name: 'Dusk Blade', icon: '🗡️', stats: 'ATK +12' },
+
+> ChatGPT:
+armor:  { name: 'Scale Mail', icon: '🛡️', stats: 'DEF +8' },
+    head: null,
+    boots: null,
+    ring: null
+  },
+  inventory: [
+    { id: 'p1', name: 'HP Potion', icon: '🧪', qty: 3, desc: 'Restore 30 HP', price: 15 },
+    { id: 'p2', name: 'Mana Potion', icon: '🔮', qty: 1, desc: 'Restore 20 MP', price: 20 },
+    { id: 'p3', name: 'Smoke Bomb', icon: '💨', qty: 2, desc: 'Escape battle', price: 30 },
+    { id: 'p4', name: 'Antidote', icon: '🌿', qty: 1, desc: 'Cure poison', price: 12 },
+    { id: 'p5', name: 'Fire Scroll', icon: '🔥', qty: 1, desc: 'Deal 40 fire dmg', price: 55 }
+  ]
+};
+
+const SHOP_ITEMS = [
+  { id: 's1', name: 'HP Potion', icon: '🧪', price: 15, desc: 'Restore 30 HP' },
+  { id: 's2', name: 'Mana Potion', icon: '🔮', price: 20, desc: 'Restore 20 MP' },
+  { id: 's3', name: 'Antidote', icon: '🌿', price: 12, desc: 'Cure poison' },
+  { id: 's4', name: 'Iron Sword', icon: '⚔️', price: 120, desc: 'ATK +8' },
+  { id: 's5', name: 'Leather Armor', icon: '🦺', price: 100, desc: 'DEF +5' },
+  { id: 's6', name: 'Fire Scroll', icon: '🔥', price: 55, desc: '40 fire dmg' },
+  { id: 's7', name: 'Smoke Bomb', icon: '💨', price: 30, desc: 'Escape battle' },
+  { id: 's8', name: 'Silver Ring', icon: '💍', price: 200, desc: 'All stats +2' }
+];
+
+// ─── RENDER ───
+function renderInv() {
+  const g = document.getElementById('invGrid');
+  if (!STATE.inventory.length) {
+    g.innerHTML = 'Your bag is empty.
+';
+    return;
+  }
+  g.innerHTML = STATE.inventory.map(it => `
+
+      ${it.icon}
+      ${it.name}
+      x${it.qty}
+
+  `).join('');
+}
+
+function renderShop() {
+  const g = document.getElementById('shopGrid');
+  g.innerHTML = SHOP_ITEMS.map(it => `
+
+      ${it.icon}
+      ${it.name}
+      💰${it.price}
+      <button onclick="buyItem('${it.id}')">Buy</button>
+
+  `).join('');
+}
+
+function buyItem(id) {
+  const item = SHOP_ITEMS.find(i => i.id === id);
+  if (!item) return;
+  // check gold & update
+  if (STATE.gold < item.price) {
+    showTip(Not enough gold! Need ${item.price}💰);
+    return;
+  }
+  STATE.gold -= item.price;
+  // add to inventory
+  const existing = STATE.inventory.find(i => i.name === item.name);
+  if (existing) {
+    existing.qty++;
+  } else {
+    STATE.inventory.push({ ...item, qty: 1 });
+  }
+  updateDisplay();
+  showTip(Bought ${item.name}! (-${item.price}💰));
+}
+
+function showTip(msg) {
+  const t = document.getElementById('tip');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._hide);
+  t._hide = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function updateDisplay() {
+  document.getElementById('goldAmt').textContent = STATE.gold;
+  document.getElementById('hpBar').style.width = (STATE.hp/STATE.maxHp*100)+'%';
+  document.getElementById('hpTxt').textContent = STATE.hp+'/'+STATE.maxHp;
+  document.getElementById('xpBar').style.width = (STATE.xp/STATE.xpNext*100)+'%';
+  document.getElementById('xpTxt').textContent = STATE.xp+'/'+STATE.xpNext;
+  renderInv();
+  renderShop();
+}
+
+// ─── TABS ───
+document.querySelectorAll('.tabs button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab+'Panel').classList.add('active');
+  });
+});
+
+// ─── TOOLTIP ON HOVER ───
+document.addEventListener('mouseover', e => {
+  const item = e.target.closest('.item');
+  const tip = document.getElementById('tip');
+  if (!item) { tip.classList.remove('show'); return; }
+  const desc = item.dataset.desc;
+  if (desc) {
+    tip.textContent = desc + (item.dataset.price ? ' · 💰'+item.dataset.price : '');
+    tip.classList.add('show');
+  }
+});
+document.addEventListener('mouseout', e => {
+  if (e.target.closest('.item')) {
+    document.getElementById('tip').classList.remove('show');
+  }
+});
+
+// ─── INIT ───
+updateDisplay();
+</script>
+</body>
+</html>
