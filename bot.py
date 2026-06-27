@@ -1,16 +1,15 @@
-import json, random, os, asyncio
+import json, random, os
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 
 TOKEN = os.environ["YOUR_BOT_TOKEN"]
-GROUP_ID = -1004384703317  # your "Bin" group
-WEBHOOK_URL = os.environ["WEBHOOK_URL"]  # set on Render
-PORT = int(os.environ.get("PORT", 8080))
+GROUP_ID = -1004384703317
+WEBHOOK_URL = os.environ["WEBHOOK_URL"]
+PORT = int(os.environ.get("PORT", 10000))
 
 XP_PER_CORRECT = 30
 LEVEL_XP = {1: 0, 2: 100, 3: 250, 4: 500, 5: 800, 6: 1200}
 CLASSES = ["Warrior", "Mage", "Rogue"]
-
 RIDDLES = [
     ("What has keys but can't open locks?", "piano"),
     ("What gets wetter the more it dries?", "towel"),
@@ -66,21 +65,18 @@ async def check(update: Update, ctx):
     await update.message.reply_text(f"+{XP_PER_CORRECT} XP")
     ctx.chat_data.pop("answer", None)
 
-async def main():
+def main():
     app = Application.builder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("puzzle", puzzle))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND & filters.Chat(GROUP_ID), check))
 
-    await app.initialize()
-    await app.bot.set_webhook(url=f"{WEBHOOK_URL}/{TOKEN}")
-    await app.start()
-    await app.updater.start_webhook(
+    app.run_webhook(
         listen="0.0.0.0",
         port=PORT,
         url_path=TOKEN,
+        webhook_url=f"{WEBHOOK_URL}/{TOKEN}"
     )
-    await asyncio.Event().wait()
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
